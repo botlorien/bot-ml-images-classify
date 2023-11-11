@@ -12,7 +12,7 @@ cl = Classify()
 db = Postgresql()
 go = GoogleSearch()
 
-go.init_browser()
+go.init_browser(headless=True)
 
 
 def download_images_from_google(main_ui):
@@ -34,10 +34,9 @@ def classify_customer_receipts(main_ui):
 
 
 def store_classification():
-    classification = cl.get_classification()
-    table = dp.generate_table_classification_to_store(classification)
-    if len(table) > 0:
-        db.to_postgresql(table, 'bot_ml_receipts_classify')
+    cl.get_classification()
+    dp.store_data_imgs_with_target('targets/correct',0)
+    dp.store_data_imgs_with_target('targets/incorrect', 1)
 
 
 def train_models():
@@ -61,19 +60,6 @@ def test_models(main_ui):
 def clear_database():
     dp.truncate_table()
 
-
-def send_info_by_whats():
-    """
-    Sends WhatsApp messages to contacts with relevant information.
-
-    """
-    contacts = hd.create_file_txt('5565984455091',
-                                  'config_contacts_to_send',
-                                  'config').split(';')
-
-    full_msg = dp.generate_info_to_whats()
-
-    zap.send_analisys_by_whatsapp(contacts, full_msg)
 
 
 if __name__ == '__main__':

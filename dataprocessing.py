@@ -9,12 +9,11 @@ from PIL import Image
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
-from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
+from imblearn.over_sampling import RandomOverSampler  # pip install -U imbalanced-learn
 import pickle
 import logging
 from lazypredict.Supervised import LazyClassifier, LazyRegressor
@@ -24,6 +23,16 @@ from functools import partial
 hd = Handler()
 db = Postgresql()
 
+img_dict = {}
+qtd_img_list = []
+
+DB_TABLE_NAME = 'bot_ml_receipts_classify'
+CHUNK_IMGS = 10000
+ZOOM = 1
+DIR_TRAIN_TEST = 'google_images'
+STORE_DB = True
+THREADS = 1
+
 
 class PathNotExists(Exception):
     """
@@ -32,42 +41,118 @@ class PathNotExists(Exception):
     pass
 
 
+def get_opened_img(path_img):
+    with Image.open(path_img) as img_obj:
+        img_obj = img_obj.resize((150, 150))
+        img_array = np.array(img_obj)
+        # Check if the image is grayscale
+        if len(img_array.shape) == 2:
+            # Image is already grayscale
+            return img_array
+        else:
+            # Convert to grayscale
+            return img_array[:, :, 0]
+
+
+def get_lists_opened_imgs(path_img):
+    global img_dict, qtd_img_list
+    img_obj = get_opened_img(path_img)
+    qtd_img_list.append(1)
+    img_dict[os.path.join(os.getcwd(), path_img)] = np.array([img_obj.ravel()])
+
+
+def reshape_img_list():
+    list_dict = list(img_dict.values())
+    img_list_reshaped = np.vstack(list_dict)
+    return img_list_reshaped
+
+
+def load_imgs(folder: str = DIR_TRAIN_TEST):
+    global img_dict, qtd_img_list
+    img_dict = {}
+    qtd_img_list = []
+    images = [f'{folder}/{img}' for img in os.listdir(folder) if '.' in img and os.path.exists(f'{folder}/{img}')]
+    images = images[:CHUNK_IMGS] if len(images) > CHUNK_IMGS else images
+    hd.thread_it(THREADS, images, get_lists_opened_imgs)
+    img_list_reshaped = reshape_img_list()
+    labels_img_list = list(img_dict.keys())
+    return img_list_reshaped, labels_img_list
+
+
+def get_model(model):
+    if len(model) == 0:
+        model_score = hd.import_file('models scores\score.csv')
+        print(model_score)
+        model = model_score.loc[0, 'Model'] + '.sav'
+    print(model)
+    with open(f'models/{model}', 'rb') as file_:
+        loaded_model = pickle.load(file_)
+    return loaded_model
+
+
+def normalize(img_list_reshaped):
+    img_list_reshaped = img_list_reshaped / 16.0
+    return img_list_reshaped
+
+
+def process_results_and_generate_report(result, labels_img_list):
+    label_result = ['CORRETO' if int(res) == 0 else 'ERRADO' for res in result]
+    print(label_result)
+    imgs_correct = [labels_img_list[i] for i, res in enumerate(result) if int(res) == 0]
+    imgs_incorrect = [labels_img_list[i] for i, res in enumerate(result) if int(res) == 1]
+    df_result2 = pd.DataFrame()
+    df_result2['imgs'] = labels_img_list
+    df_result2['result'] = label_result
+    hd.to_csv(df_result2, 'Relacao imgs auditadas', 'relatorios auditoria')
+    return imgs_correct, imgs_incorrect
+
+
+def store_data_imgs_with_target(folder, target, database: bool = STORE_DB):
+    if os.listdir(folder):
+        img_list_reshaped, labels_img_list = load_imgs(folder)
+        list_target = [target for _ in labels_img_list]
+        labels_img_list = [label.split('/')[-1] for label in labels_img_list]
+
+        df_data_to_db = pd.DataFrame()
+        df_data_to_db['imgs'] = [str(';'.join([str(val) for val in lista])) for lista in img_list_reshaped]
+        df_data_to_db['class'] = list_target
+        df_data_to_db['labels'] = labels_img_list
+
+        print(df_data_to_db)
+        if database:
+            db.to_postgresql(df_data_to_db.astype('str'), DB_TABLE_NAME)
+        else:
+            hd.create_folder('data')
+            df_data_to_db.to_csv('data/dataset.csv', sep=',')
+
+
 def truncate_table():
-    name_table = 'bot_ml_receipts_classify'
     sql = f"""
-    TRUNCATE TABLE {name_table};
+    TRUNCATE TABLE {DB_TABLE_NAME};
     """
-    tabela = db.execute_script(sql)
+    db.execute_script(sql)
 
 
-def get_table_train_from_db():
-    name_table = 'bot_ml_receipts_classify'
-    sql = f"""
-    SELECT * FROM {name_table}
-    """
-    tabela = db.execute_script(sql)
-    colunas = db.select_columns(name_table, False).replace('"', '')
+def get_table_train():
+    if STORE_DB:
+        sql = f"""
+        SELECT * FROM {DB_TABLE_NAME}
+        """
+        tabela = db.execute_script(sql)
+        colunas = db.select_columns(DB_TABLE_NAME, False).replace('"', '')
 
-    tabela = pd.DataFrame(tabela)
-    print(tabela)
-    if len(tabela) > 0:
+        tabela = pd.DataFrame(tabela)
+
         tabela.columns = colunas.split(' ,')
         print(tabela)
+    else:
+        tabela = pd.read_csv('data/dataset.csv', sep=',')
 
-        df_imgs_data = tabela.loc[:, 'imgs'].str.split(';', expand=True).astype('float')
-        df_imgs_target = tabela.loc[:, 'class'].astype('float')
-        df_imgs_name_img = tabela.loc[:, 'labels'].astype('str')
+    df_imgs_data = tabela.loc[:, 'imgs'].str.split(';', expand=True).astype('float')
+    df_imgs_target = tabela.loc[:, 'class'].astype('float')
+    df_imgs_name_img = tabela.loc[:, 'labels'].astype('str')
 
-        return df_imgs_data, df_imgs_target, df_imgs_name_img
-
-
-def compare_classification_in_db_with_folder():
-    df_imgs_data, df_imgs_target, df_imgs_name_img = get_table_train_from_db()
-    hd.delete_files_folder('verification')
-    for i, _class in enumerate(df_imgs_target):
-        img = df_imgs_name_img[i]
-        path_ = hd.create_folder(f'verification/class_{_class}') + f'/{img}'
-        hd.move_file(f'google_images/{img}', path_)
+    return df_imgs_data, df_imgs_target, df_imgs_name_img
 
 
 def generate_models_scores_reports(score, predictions, y_test):
@@ -109,10 +194,14 @@ def generate_models_scores_reports(score, predictions, y_test):
 
 
 def train_models():
-    result = get_table_train_from_db()
-    if result is not None and len(os.listdir('google_images')) > 0:
+    result = get_table_train()
+    if result is not None:
         try:
             df_imgs_data, df_imgs_target, _ = result
+            print(df_imgs_target.value_counts())
+            ros = RandomOverSampler(random_state=42)
+            df_imgs_data, df_imgs_target = ros.fit_resample(df_imgs_data, df_imgs_target)
+            print(df_imgs_target.value_counts())
             # Split the data into training and testing sets
             X_train, X_test, y_train, y_test = train_test_split(df_imgs_data, df_imgs_target, test_size=0.2,
                                                                 random_state=42)
@@ -142,137 +231,33 @@ def train_models():
         return False
 
 
-def _get_lists_opened_imgs(folder, path_imgs, qtde_imgs, img_list, names_img_list):
-    """
-    This function processes an image: resizes it, creates a thumbnail, and updates lists with image data and image names.
-
-    :param folder: The folder where the image is located.
-    :param path_imgs: The path of the image file.
-    :param qtde_imgs: A numpy array that keeps track of the number of images processed.
-    :param img_list: A numpy array that stores data of processed images.
-    :param names_img_list: A numpy array that stores paths of processed images.
-
-    :return: Updated img_list, names_img_list, and qtde_imgs.
-    """
-    img = path_imgs.split('/')[-1]
-    path_imgs = path_imgs if len(folder) == 0 else f'{folder}/{path_imgs}'
-    folder = folder if len(folder) > 0 else '/'.join(path_imgs.split('/')[:-1])
-    print(path_imgs)
-    try:
-        img_obj = Image.open(f'{path_imgs}')
-        new_size = (200, 200)
-        img_obj = img_obj.resize(new_size)
-        img_obj.thumbnail((150, 150), Image.LANCZOS)
-
-        hd.create_folder(f'{folder}/redimensionados')
-        img_obj.save(f'{folder}/redimensionados/{img}')
-        img_cv = cv2.imread(f'{folder}/redimensionados/{img}', cv2.IMREAD_UNCHANGED)[:, :, 0]
-        qtde_imgs = np.append(qtde_imgs, 1)
-
-        dim_img = img_cv.shape[0] * img_cv.shape[1]
-        img_cv = img_cv.reshape(dim_img)
-        img_list = np.append(img_list, [img_cv])
-        names_img_list = np.append(names_img_list, os.path.join(os.getcwd(), path_imgs))
-    except Exception as e:
-        logging.exception(e)
-    return img_list, names_img_list, qtde_imgs
+def test_model(model: str = ''):
+    hd.delete_files_folder('relatorios auditoria')
+    if len(os.listdir(DIR_TRAIN_TEST)) > 0:
+        img_list_reshaped, labels_img_list = load_imgs()
+        loaded_model = get_model(model)
+        data_test = normalize(img_list_reshaped)
+        result = loaded_model.predict(data_test)
+        print(result)
+        return process_results_and_generate_report(result, labels_img_list)
 
 
-def _load_imgs():
-    img_list = np.array([])
-    class_list = np.array([])
-    names_img_list = np.array([])
-    qtde_imgs = np.array([])
-    dim_img = 150 * 150
-    folder = 'google_images'
-    if os.path.exists(folder):
-        for p, img in enumerate(os.listdir(folder)):
-            if '.' not in img:
-                continue
-            img_list, names_img_list, qtde_imgs = _get_lists_opened_imgs(folder, img, qtde_imgs, img_list,
-                                                                         names_img_list)
-        img_list_reshaped = img_list.reshape(int(qtde_imgs.sum()), dim_img)
-
-        return img_list_reshaped, names_img_list
-    else:
-        raise PathNotExists
+def move_file(path_from, path_to):
+    if os.path.exists(path_from):
+        hd.move_file(path_from, path_to)
+        os.remove(path_from)
 
 
-def _load_imgs_classified(dict_classification):
-    img_list = np.array([])
-    class_list = []
-    names_img_list = np.array([])
-    qtde_imgs = np.array([])
-    dim_img = 150 * 150
-    folder = ''
-    for i, class_ in enumerate(dict_classification.keys()):
-        for p, img in enumerate(dict_classification[class_]):
-            print(class_)
-            print(img)
-            if '.' not in img:
-                continue
-            img_list, names_img_list, qtde_imgs = _get_lists_opened_imgs(folder, img, qtde_imgs, img_list,
-                                                                         names_img_list)
-            print(img_list)
-            print(names_img_list)
-            print(qtde_imgs)
-            class_list.append(i)
-
-    img_list_reshaped = img_list.reshape(int(qtde_imgs.sum()), dim_img)
-
-    return img_list_reshaped, names_img_list, class_list
-
-
-def order_list_target(list_labels, dict_classification):
-    """
-    This function orders the list of labels based on the classification dictionary.
-
-    :param list_labels: A list of labels (image file paths).
-    :param dict_classification: A dictionary containing classification information.
-    :return: A list of target values based on the classification dictionary.
-    """
-    list_target = []
-    for label in list_labels:
-        label = os.path.abspath(label)
-        for i, class_ in enumerate(dict_classification.keys()):
-            label_class = [label_c for label_c in dict_classification[class_] if os.path.abspath(label_c) in label]
-            if len(label_class) > 0:
-                list_target.append(i)
-                break
-    print(list_target)
-    print(list_labels)
-    return list_target
-
-
-def generate_table_classification_to_store(dict_classification):
-    list_data, list_labels, list_target = _load_imgs_classified(dict_classification)
-    print(list_labels)
-    print(list_target)
-    list_labels = [label.split('/')[-1] for label in list_labels]
-    df_imgs_data = pd.DataFrame(list_data)
-    df_imgs_target = pd.DataFrame(list_target)
-    df_imgs_name_img = pd.DataFrame(list_labels)
-
-    df_imgs_data.columns = [str(coluna) for coluna in df_imgs_data.columns]
-    df_imgs_target.columns = [str(coluna) for coluna in df_imgs_target.columns]
-    df_imgs_name_img.columns = [str(coluna) for coluna in df_imgs_name_img.columns]
-
-    hd.create_folder('dados')
-
-    df_imgs_data.to_csv('dados/df_imgs_data.csv', sep=';')
-    df_imgs_target.to_csv('dados/df_imgs_target.csv', sep=';')
-    df_imgs_name_img.to_csv('dados/df_imgs_name_img.csv', sep=';')
-
-    df_data_to_db = pd.DataFrame()
-    df_imgs_data = df_imgs_data.astype('str')
-    df_imgs_target = df_imgs_target.astype('str')
-    df_imgs_name_img = df_imgs_name_img.astype('str')
-
-    df_data_to_db['imgs'] = [str(';'.join(lista)) for lista in df_imgs_data.values.tolist()]
-    df_data_to_db['class'] = [str(';'.join(lista)) for lista in df_imgs_target.values.tolist()]
-    df_data_to_db['labels'] = [str(';'.join(lista)) for lista in df_imgs_name_img.values.tolist()]
-
-    return df_data_to_db.astype('str')
+def order_imgs_result(imgs_correct, imgs_incorrect):
+    hd.delete_files_folder('classified imgs')
+    path_correct = hd.create_folder('classified imgs/correct')
+    path_incorrect = hd.create_folder('classified imgs/incorrect')
+    for img in imgs_correct:
+        name_img = os.path.basename(img)
+        move_file(img, os.path.join(path_correct, name_img))
+    for img in imgs_incorrect:
+        name_img = os.path.basename(img)
+        move_file(img, os.path.join(path_incorrect, name_img))
 
 
 def max_len_val_table(table):
@@ -285,7 +270,7 @@ def max_len_val_table(table):
 
 
 def print_list_as_table(list_vals, max_len):
-    list_vals = [hd.add_left_space(val, max_len) for val in list_vals]
+    list_vals = [hd.add_left_value(val, max_len, ' ') for val in list_vals]
     print('|'.join(list_vals))
 
 
@@ -295,89 +280,6 @@ def print_score():
     print_list_as_table(model_score.columns, max_len)
     for row in model_score.itertuples(index=False):
         print_list_as_table(row, max_len)
-
-
-def test_model(model: str = ''):
-    hd.delete_files_folder('relatorios auditoria')
-    if len(os.listdir('google_images')) > 0:
-        img_list_reshaped, names_img_list = _load_imgs()
-
-        if len(model) <= 0:
-            model_score = hd.import_file('MODELS SCORES\score.csv')
-            print(model_score)
-            model = model_score.loc[0, 'Model'] + '.sav'
-        print(model)
-
-        # load the saved model
-        with open(f'models/{model}', 'rb') as file_:
-            loaded_model = pickle.load(file_)
-
-        # make a prediction using the loaded model
-        news = img_list_reshaped / 16.0
-        df_imgs_data_test = pd.DataFrame(news)
-        df_imgs_data_test.columns = [str(coluna) for coluna in df_imgs_data_test.columns]
-        result = loaded_model.predict(df_imgs_data_test)
-        print(result)
-
-        label_result = ['CORRETO' if int(res) == 0 else 'ERRADO' for res in result]
-        print(label_result)
-
-        imgs_correct = [names_img_list[i] for i, res in enumerate(result) if int(res) == 0]
-        imgs_incorrect = [names_img_list[i] for i, res in enumerate(result) if int(res) == 1]
-
-        df_result2 = pd.DataFrame()
-
-        df_result2['imgs'] = names_img_list
-        df_result2['result'] = label_result
-
-        hd.to_csv(df_result2, 'Relacao imgs auditadas', 'relatorios auditoria')
-
-        return imgs_correct, imgs_incorrect
-
-
-def order_imgs_result(imgs_correct, imgs_incorrect):
-    """
-    Organizes images based on the prediction results (correct or incorrect) into separate folders.
-
-    :param customer: The customer's name as a string.
-    :param imgs_correct: A list of paths to correctly classified images.
-    :param imgs_incorrect: A list of paths to incorrectly classified images.
-    :return: None
-    """
-    hd.create_folder('classified imgs')
-    hd.delete_files_folder('classified imgs/')
-    path_correct = hd.create_folder('classified imgs/correct')
-    path_incorrect = hd.create_folder('classified imgs/incorrect')
-    for img in imgs_correct:
-        name_img = img.split('/')[-1]
-        hd.move_file(img, f'{path_correct}/{name_img}')
-    for img in imgs_incorrect:
-        name_img = img.split('/')[-1]
-        hd.move_file(img, f'{path_incorrect}/{name_img}')
-
-
-def generate_info_to_whats():
-    path_corrects = 'classified imgs/correct'
-    path_incorrects = 'classified imgsincorrect'
-    if os.path.exists(path_corrects) and os.path.exists(path_incorrects):
-        corretos = len(os.listdir(path_corrects))
-        errados = len(os.listdir(path_incorrects))
-
-        sct = f"""📍 *Comprovantes Auditados* 📍
-            *Corretos: {corretos}*
-            *Errados: {errados}*
-            """
-        sct = sct.replace('\t', '').replace('  ', '')
-        return sct
-
-
-def create_folders_nce(path):
-    try:
-        if not os.path.exists(path):
-            os.mkdir(path)
-        return path
-    except Exception as e:
-        logging.exception(e)
 
 
 if __name__ == '__main__':

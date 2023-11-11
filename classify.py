@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-
 from interface import ui
 from datahandler import Handler
 
@@ -16,7 +15,7 @@ class Classify:
 
     def __init__(self):
         self.ui = ui
-        self.classified_imgs = {'correct': [], 'incorrect': []}
+        self.classified_imgs = {'correct': [], 'incorrect': [], 'ignored': []}
         self.counter = 0
         self.status_show_incorrect = False
 
@@ -24,9 +23,15 @@ class Classify:
         """
         Method to classify the current image as correct.
         """
-        if (len(self.classified_imgs['correct']) + len(self.classified_imgs['incorrect'])) < len(
+        if (len(self.classified_imgs['correct']) + len(self.classified_imgs['incorrect']) + len(
+                self.classified_imgs['ignored'])) < len(
                 self.ui.list_path_imgs):
-            self.classified_imgs['correct'].append(self.ui.list_path_imgs[self.ui.counter_img])
+            path_img = self.ui.list_path_imgs[self.ui.counter_img]
+            print(path_img)
+            file_ = os.path.basename(path_img)
+            print(file_)
+            self.classified_imgs['correct'].append(path_img)
+            hd.move_file(path_img, os.path.abspath(f'targets/correct/{file_}'))
             self.ui.next_img()
         else:
             print('Classificação finalizada!')
@@ -38,13 +43,35 @@ class Classify:
         """
         Method to classify the current image as incorrect.
         """
-        if (len(self.classified_imgs['correct']) + len(self.classified_imgs['incorrect'])) < len(
+        if (len(self.classified_imgs['correct']) + len(self.classified_imgs['incorrect']) + len(
+                self.classified_imgs['ignored'])) < len(
                 self.ui.list_path_imgs):
-            self.classified_imgs['incorrect'].append(self.ui.list_path_imgs[self.ui.counter_img])
+            path_img = self.ui.list_path_imgs[self.ui.counter_img]
+            file_ = os.path.basename(path_img)
+            self.classified_imgs['incorrect'].append(path_img)
+            hd.move_file(path_img, os.path.abspath(f'targets/incorrect/{file_}'))
             self.ui.next_img()
         else:
             print('Classificação finalizada!')
             print(len(self.classified_imgs['incorrect']), self.classified_imgs['incorrect'])
+            self.ui.messagebox('Todas as imagens \njá foram classificadas!', 'info')
+            self.main_ui()
+
+    def _ignore(self):
+        """
+        Method to classify the current image as incorrect.
+        """
+        if (len(self.classified_imgs['correct']) + len(self.classified_imgs['incorrect']) + len(
+                self.classified_imgs['ignored'])) < len(
+                self.ui.list_path_imgs):
+            path_img = self.ui.list_path_imgs[self.ui.counter_img]
+            file_ = os.path.basename(path_img)
+            self.classified_imgs['ignored'].append(path_img)
+            hd.move_file(path_img, os.path.abspath(f'targets/ignored/{file_}'))
+            self.ui.next_img()
+        else:
+            print('Classificação finalizada!')
+            print(len(self.classified_imgs['ignored']), self.classified_imgs['ignored'])
             self.ui.messagebox('Todas as imagens \njá foram classificadas!', 'info')
             self.main_ui()
 
@@ -84,9 +111,13 @@ class Classify:
         Method to classify receipts by showing images and providing classification options.
         """
         path_ = 'google_images'
+        hd.create_folder('targets')
+        hd.delete_files_folder('targets/correct')
+        hd.delete_files_folder('targets/incorrect')
+        hd.delete_files_folder('targets/ignored')
         if os.path.exists(path_) and len(os.listdir(path_)) > 0:
-            list_name_img_buttons = ['CERTO', 'ERRADO']
-            list_func_img_buttons = [self._corret, self._incorret]
+            list_name_img_buttons = ['CERTO', 'ERRADO', 'IGNORAR']
+            list_func_img_buttons = [self._corret, self._incorret, self._ignore]
             self.ui.ui_show_imgs("Imagem",
                                  path_,
                                  list_name_img_buttons,
@@ -116,13 +147,15 @@ class Classify:
                                  height=None,
                                  max_size=max_size_height)
         else:
-            self.ui.messagebox('Sem Imagens')
+            # self.ui.messagebox('Sem Imagens Corretas')
+            if 'correct' == folder:
+                self.show_receipts('incorrect')
 
     def clear_classification(self):
         """
         Clears the current classification data.
         """
-        self.classified_imgs = {'correct': [], 'incorrect': []}
+        self.classified_imgs = {'correct': [], 'incorrect': [], 'ignored': []}
 
     def get_classification(self):
         """
@@ -143,4 +176,4 @@ class Classify:
 
 if __name__ == '__main__':
     cl = Classify()
-    cl.menu()
+    cl.classify_receipts()

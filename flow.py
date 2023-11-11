@@ -19,7 +19,7 @@ class Tasks:
         self.app.set_bot_name('Bot_nce_get_ssw_receipts_ml_classify_and_send_whats')
         self.app.set_bot_description(
             'This bot download ssw receipts classify by machine learning and send the result by whatsapp')
-        self.app.set_bot_version('1.0.0')
+        self.app.set_bot_version('1.1.0')
         self.app.init_bot()
 
         # init here every task result as needle
