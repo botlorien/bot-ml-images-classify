@@ -11,6 +11,7 @@ from web import Web
 from datahandler import Handler
 
 hd = Handler()
+
 SCROLL = int(hd.create_file_txt('20', 'config_range_scroll', 'config').strip())
 
 

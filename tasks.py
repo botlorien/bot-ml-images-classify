@@ -1,23 +1,26 @@
+import time
+
 import dataprocessing as dp
 from webrequests import GoogleSearch
 from interface import ui
 from datahandler import Handler
 import os
 from classify import Classify
-from database import Postgresql
-import whats as zap
 
 hd = Handler()
 cl = Classify()
-db = Postgresql()
 go = GoogleSearch()
 
-go.init_browser(headless=True)
+headless = hd.create_file_json({'headless': False},
+                               'config_headless_mode',
+                               'config')['headless']
 
 
 def download_images_from_google(main_ui):
+    go.init_browser(headless=headless, method='selenium', driver='chrome')
     hd.delete_files_folder('google_images')
     cl.set_main_ui(main_ui)
+    time.sleep(1)
     key_word = ui.open_input_dialog('Search', 'Digite o texto de busca')
     go.get_images_from_search(key_word)
 
@@ -35,7 +38,7 @@ def classify_customer_receipts(main_ui):
 
 def store_classification():
     cl.get_classification()
-    dp.store_data_imgs_with_target('targets/correct',0)
+    dp.store_data_imgs_with_target('targets/correct', 0)
     dp.store_data_imgs_with_target('targets/incorrect', 1)
 
 
@@ -59,7 +62,6 @@ def test_models(main_ui):
 
 def clear_database():
     dp.truncate_table()
-
 
 
 if __name__ == '__main__':

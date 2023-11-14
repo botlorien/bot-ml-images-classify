@@ -138,6 +138,30 @@ class Tasks:
         ui.ui(buttons_name, buttons_func)
 
 
+def _main_ui_free():
+    """
+    Defines the main user interface with button names and their associated functions.
+    """
+    buttons_name = [
+        'BAIXAR IMAGENS',
+        'CLASSIFICAR IMAGENS',
+        'GRAVAR CLASSIFICAÇÃO',
+        'TREINAR MODELOS',
+        'AUDITAR IMAGENS',
+        'LIMPAR DADOS'
+    ]
+    buttons_func = [
+        lambda: ts.download_images_from_google(_main_ui_free),
+        lambda: ts.classify_customer_receipts(_main_ui_free),
+        lambda: ts.store_classification(),
+        lambda: ts.train_models(),
+        lambda: ts.test_models(_main_ui_free),
+        lambda: ts.clear_database()
+
+    ]
+    ui.ui(buttons_name, buttons_func)
+
+
 def main_ui(app):
     """
     Provides an interactive interface for the user to work with the bot.
@@ -150,6 +174,11 @@ def main_ui(app):
         tasks.main_ui()
 
 
+def main_ui_free():
+    while True:
+        _main_ui_free()
+
+
 def main(app):
     """
     Executes all tasks for all customers in a batch process.
@@ -158,12 +187,7 @@ def main(app):
     """
     tasks = Tasks(app)
     tasks.init_credentials()
-    tasks.download_all_customers_ssw_550_report()
-    tasks.process_all_customers_ssw_550_report()
-    tasks.get_imgs_from_all_customers()
-    tasks.train_test_models_all_customers()
-    tasks.order_receipts_to_nce_folder()
-    tasks.send_info_by_whats()
+
     # ... another task here!
 
 

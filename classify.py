@@ -6,7 +6,7 @@ from datahandler import Handler
 
 hd = Handler()
 
-max_size_height = int(hd.create_file_txt('600',
+max_size_height = int(hd.create_file_txt('300',
                                          'config_max_size_height',
                                          'config').strip())
 

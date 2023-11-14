@@ -21,17 +21,27 @@ import threading as td
 from functools import partial
 
 hd = Handler()
-db = Postgresql()
 
 img_dict = {}
 qtd_img_list = []
 
-DB_TABLE_NAME = 'bot_ml_receipts_classify'
-CHUNK_IMGS = 10000
-ZOOM = 1
-DIR_TRAIN_TEST = 'google_images'
-STORE_DB = True
-THREADS = 1
+env = {
+    'dbtable': 'bot_ml_receipts_classify',
+    'chunk_img': 10000,
+    'dir_train_test': 'google_images',
+    'store_db': False,
+    'threads': 1,
+}
+env = hd.create_file_json(env, 'config_env', 'config')
+
+DB_TABLE_NAME = env['dbtable']
+CHUNK_IMGS = env['chunk_img']
+DIR_TRAIN_TEST = env['dir_train_test']
+STORE_DB = env['store_db']
+THREADS = env['threads']
+
+if STORE_DB:
+    db = Postgresql()
 
 
 class PathNotExists(Exception):
@@ -123,7 +133,7 @@ def store_data_imgs_with_target(folder, target, database: bool = STORE_DB):
             db.to_postgresql(df_data_to_db.astype('str'), DB_TABLE_NAME)
         else:
             hd.create_folder('data')
-            df_data_to_db.to_csv('data/dataset.csv', sep=',')
+            df_data_to_db.to_csv('data/dataset.csv', sep=',', mode='a', header=None, index=False)
 
 
 def truncate_table():
@@ -146,7 +156,8 @@ def get_table_train():
         tabela.columns = colunas.split(' ,')
         print(tabela)
     else:
-        tabela = pd.read_csv('data/dataset.csv', sep=',')
+        tabela = pd.read_csv('data/dataset.csv', sep=',', header=None)
+        tabela.columns = ['imgs', 'class', 'labels']
 
     df_imgs_data = tabela.loc[:, 'imgs'].str.split(';', expand=True).astype('float')
     df_imgs_target = tabela.loc[:, 'class'].astype('float')

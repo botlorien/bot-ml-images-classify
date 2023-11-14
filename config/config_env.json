@@ -1,0 +1,1 @@
+{"dbtable": "bot_ml_receipts_classify", "chunk_img": 10000, "dir_train_test": "google_images", "store_db": false, "threads": 1}

@@ -1,1 +1,1 @@
-'NoneType' object has no attribute 'seek'
+Could not reach host. Are you offline?
