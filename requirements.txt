@@ -1,7 +1,7 @@
 appdirs==1.4.4
 Babel==2.13.1
 beautifulsoup4==4.12.2
--e git+https://github.com/botlorien/botlorien_sources.git@aa0d906a6655e5c963b5278716bc6fd309cdb280#egg=botlorien_sources
+-e git+https://github.com/botlorien/botlorien_sources.git@eaead29fd979281839cb903cfd2c7517e40ae85e#egg=botlorien_sources
 cachetools==5.3.2
 certifi==2023.7.22
 cffi==1.16.0
