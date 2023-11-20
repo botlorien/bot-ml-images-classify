@@ -77,15 +77,17 @@ class GoogleSearch(Web):
             sources += self.driver.execute_script(script)
 
         sources = [src for src in sources if len(src) > 0]
-        links = list(set([src for src in sources if 'https' in str(src) and not 'favicon' in str(src)]))[:25]
+        links = list(set([src for src in sources if 'https' in str(src) and not 'favicon' in str(src)]))#[:25]
         print(links)
-        sources = list(set([src for src in sources if 'data:image' in src]))[:5]
+        sources = list(set([src for src in sources if 'data:image' in src]))#[:5]
 
         self.total = len(sources) + len(links)
         hd.delete_files_folder('google_images')
 
         hd.thread_it(20, sources, self.save_img_64)
         hd.thread_it(20, links, self.get_link)
+
+        self.driver.quit()
 
     def wait(self):
         input()
