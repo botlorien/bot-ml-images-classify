@@ -4,42 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="153cc750-4baa-45f9-a440-4b5fc5665e84" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/scripts/dataprocessing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Bot_ml_images_classify.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Bot_ml_images_classify.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/2/3/235cfd922408cb4eb379b4f78717253afe58a261" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/3/3/3376f79c78575c8a4f13832bbfa5342191d02822" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/4/1/41e71d9053e8d9c4fab44347493d029ada17e14f" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/5/c/5c918ceca2a23cce1f283d508c3956b787d56d30" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/f/6fa62807f1fe4bf47c8c2eeed8043d9df6ff8e73" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/8/1/81724b6c348c66b3ce4a7f36d24d0849ab270dfe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/d/d/dd59a348a5616afbb43eb0bdfa64da73da6ab23d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/2/3/235cfd922408cb4eb379b4f78717253afe58a261" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/3/3/3376f79c78575c8a4f13832bbfa5342191d02822" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/4/1/41e71d9053e8d9c4fab44347493d029ada17e14f" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/5/c/5c918ceca2a23cce1f283d508c3956b787d56d30" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/6/f/6fa62807f1fe4bf47c8c2eeed8043d9df6ff8e73" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/8/1/81724b6c348c66b3ce4a7f36d24d0849ab270dfe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/d/d/dd59a348a5616afbb43eb0bdfa64da73da6ab23d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Bot_ml_images_classify.py" beforeDir="false" afterPath="$PROJECT_DIR$/Bot_ml_images_classify.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classify.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config_headless_mode.json" beforeDir="false" afterPath="$PROJECT_DIR$/config/config_headless_mode.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config_max_size_height.txt" beforeDir="false" afterPath="$PROJECT_DIR$/config/config_max_size_height.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config_range_scroll.txt" beforeDir="false" afterPath="$PROJECT_DIR$/config/config_range_scroll.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/dataset.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataprocessing.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgedriver/msedgedriver.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/flow.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logLastException.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrequests.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/whats.py" beforeDir="false" />
-    </list>
+    <list default="true" id="153cc750-4baa-45f9-a440-4b5fc5665e84" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
