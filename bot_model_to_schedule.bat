@@ -1,2 +1,0 @@
-"C:\Users\BenHur\Documents\GitHub\Bot_nce_get_ssw_receipts_ml_classify_and_send_whats\venv\Scripts\python.exe" "C:\Users\BenHur\Documents\GitHub\Bot_nce_get_ssw_receipts_ml_classify_and_send_whats\Bot_nce_get_ssw_receipts_ml_classify_and_send_whats.py"
-

@@ -4,21 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="153cc750-4baa-45f9-a440-4b5fc5665e84" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Bot_ml_images_classify.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Bot_ml_images_classify.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Bot_ml_images_classify.py" beforeDir="false" afterPath="$PROJECT_DIR$/Bot_ml_images_classify.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logExceptions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logExceptions.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models scores/more_scores.csv" beforeDir="false" afterPath="$PROJECT_DIR$/models scores/more_scores.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models scores/predictions.csv" beforeDir="false" afterPath="$PROJECT_DIR$/models scores/predictions.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models scores/score.csv" beforeDir="false" afterPath="$PROJECT_DIR$/models scores/score.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parameters/botlorien_credentials.bot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/relatorios auditoria/Relacao imgs auditadas.csv" beforeDir="false" afterPath="$PROJECT_DIR$/relatorios auditoria/Relacao imgs auditadas.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/flow.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/flow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/webrequests.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/webrequests.py" afterDir="false" />
-    </list>
+    <list default="true" id="153cc750-4baa-45f9-a440-4b5fc5665e84" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
