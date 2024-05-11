@@ -1,6 +1,6 @@
 import os
-from botlorien_sources.datahandler import Handler
-from botlorien_sources.database import Postgresql
+from scripts.datahandler import Handler
+from scripts.database import Postgresql
 from PIL import Image
 import numpy as np
 import pandas as pd

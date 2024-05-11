@@ -1,4 +1,6 @@
 import logging
+import sys
+#sys.path.append('venv/src/botlorien_sources')
 from datetime import datetime
 try:
     from scripts import flow

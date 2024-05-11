@@ -1,7 +1,7 @@
 from scripts import tasks as ts
-from botlorien_sources.interface import ui
-from botlorien_sources.datahandler import Handler
-from botlorien_sources.app import BotApp
+from scripts.interface import ui
+from scripts.datahandler import Handler
+from scripts.app import BotApp
 
 hd = Handler()
 

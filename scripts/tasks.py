@@ -1,8 +1,8 @@
 import time
 from scripts import dataprocessing as dp
 from scripts.webrequests import GoogleSearch
-from botlorien_sources.interface import ui
-from botlorien_sources.datahandler import Handler
+from scripts.interface import ui
+from scripts.datahandler import Handler
 import os
 from scripts.classify import Classify
 

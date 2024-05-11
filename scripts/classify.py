@@ -1,7 +1,7 @@
 import os
 import time
-from botlorien_sources.interface import ui
-from botlorien_sources.datahandler import Handler
+from scripts.interface import ui
+from scripts.datahandler import Handler
 
 hd = Handler()
 

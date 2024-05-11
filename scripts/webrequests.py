@@ -7,8 +7,8 @@ from urllib.parse import urlparse, unquote
 import time
 import base64
 from datetime import datetime
-from botlorien_sources.web import Web
-from botlorien_sources.datahandler import Handler
+from scripts.web import Web
+from scripts.datahandler import Handler
 
 hd = Handler()
 

@@ -154,3 +154,4 @@ cython_debug/
 *.jpg
 *.sav
 .sav
+venv2/
