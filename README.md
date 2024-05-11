@@ -95,4 +95,4 @@ Esse projeto está sob a licença (MIT) - acesse os detalhes [LICENSE.md](https:
 
 ## 📞​ Contato e Suporte
 * Para suporte, mande um email para botlorien@gmail.com.
-* [linkedin](linkedin.com/in/ben-hur-p-b-santos)
+* [linkedin](https://www.linkedin.com/in/ben-hur-p-b-santos/)
