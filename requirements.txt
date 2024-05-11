@@ -69,3 +69,4 @@ webdriver-manager==4.0.1
 websockets==10.4
 xgboost==2.0.1
 zipp==3.17.0
+psycopg2==2.9.9
