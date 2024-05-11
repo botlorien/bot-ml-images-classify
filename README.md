@@ -1,90 +1,98 @@
 
-![Logo do projeto](https://i.imgur.com/kniMQHu.png)
+![Logo do projeto](https://drive.google.com/uc?id=1_f9DWbFolAEFZ3ebPuLHj5ZZUVDQuzkg&export=view)
 
-# Nome do Projeto
+# Automatização de Processos de Rotulagem e Classificação de Imagens com Interface Gráfica
 
-Uma breve descrição do projeto aqui.
+Este projeto Python desenvolve uma interface desktop interativa que facilita a rotulagem de imagens para treinamento de modelos de classificação binária supervisionada. Utilizando o framework Selenium para automação, o sistema automatiza o download de imagens do Google Imagens. As imagens baixadas são exibidas na interface, permitindo que o usuário as rotule de acordo com as categorias desejadas.
+
+As imagens rotuladas são vetorizadas e podem ser armazenadas tanto em um arquivo CSV quanto em um banco de dados PostgreSQL. Esses dados rotulados alimentam o treinamento de vários modelos de machine learning através da biblioteca LazyPredict, que automatiza a comparação e seleção de modelos.
+
+Os modelos treinados são salvos para análises futuras. Relatórios detalhados com métricas de desempenho são gerados e armazenados localmente, permitindo uma fácil consulta e análise dos modelos com melhor desempenho. Finalmente, a interface proporciona a visualização das imagens classificadas pelo modelo selecionado pelo usuário, facilitando a verificação e a aplicação prática dos resultados.
 
 ## 🔥 Introdução
 
-Coloque aqui as instruções e quais são os objetivos desse projeto, funcionalidades.
+A papeline de execução na Interface segue essa sequência abaixo: 
+
+**Treino:**
+* BAIXAR IMAGENS
+* CLASSIFICAR IMAGENS
+* GRAVAR CLASSIFICAÇÃO
+* TREINAR MODELOS
+* AUDITAR IMAGENS
+
+**Teste:**
+* BAIXAR IMAGENS
+* AUDITAR IMAGENS
+
+**Reiniciar a base de dados:**
+* LIMPAR DADOS (Opcional caso queira reiniciar a base de dados)
 
 ### ⚙️ Pré-requisitos
 
-Coloque aqui passo a passo que precisa para instalar o projeto e como instalá-lo.
-
-```
-Pode inserir exemplos.
-```
+Esse aplicação foi desenvolvida em ambiente com essas especificações:
+* Windows 10 Home
+* Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz   2.60 GHz
+* 8GB RAM
+* Sistema operacional de 64 bits
+* Python >= 3.10
+* git
+  
+Obs: Não foi testada em ambiente Linux!
 
 ### 🔨 Guia de instalação
 
-Explique aqui um passo a passo mostrando como deve executar para ter um ambiente de desenvolvimento em execução, desde instalar e rodar o projeto.
+Para instalar o repositorio siga o passo a passo abaixo
 
-Etapas para instalar:
+**Passo 1:**
 
-```
-Codigo, exemplos
-```
-Passo 2:
-```
-Codigo, exemplos
+```cmd
+git clone https://github.com/botlorien/Bot_ml_images_classify.git
 ```
 
+**Passo 2:**
 
-## 🛠️ Executando os testes (caso tenha testes)
-
-Explique como executar os testes automatizados para este sistema.
-
+```cmd
+cd Bot_ml_images_classify
 ```
-Coloque exemplos
+
+**Passo 3:**
+
+```cmd
+python -m venv venv
+```
+
+**Passo 4:**
+
+```cmd
+.\venv\Scripts\activate
+```
+
+**Passo 5:**
+
+```cmd
+pip install -r requirements.txt
+```
+
+**Passo 6:**
+
+```cmd
+python Bot_ml_images_classify.py
 ```
 
 ## 📦 Tecnologias usadas:
 
-Coloque aqui as ferramentas que você usou para criar seu projeto, exemplo:
-
-* ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
-* ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-* ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
-
-- Link para pegar as badges: https://github.com/Ileriayo/markdown-badges
-
-Ou pode separar por stacks:
-
-**Front-end:**
-* [React JS](https://react.dev/)
-* [TailwindCSS](https://tailwindcss.com/)
-
-**Back-end:**
-* [NodeJS](https://nodejs.org/).
-* [TypeScript](https://www.typescriptlang.org/) 
-* [Mongo DB](https://mongodb.com/)
-
-## 👷 Autores
-
-Mencione todos aqueles que ajudaram a levantar o projeto desde o seu início, colaboradores.
-
-* **Nome do dev** - *Função realizada* - [nome_do_dev](https://github.com/link_do_Perfil)
-* **Sujeito Programador** - *Frontend do projeto* - [@sujeitoprogramador](https://github.com/devfraga)
+* ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+* ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+* ![Selenium](https://img.shields.io/badge/-selenium-%43B02A?style=for-the-badge&logo=selenium&logoColor=white)
+* ![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white)
+* ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+* ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
 
 ## 📄 Licença
 
-Esse projeto está sob a licença (nome da licença) - acesse os detalhes [LICENSE.md](https://github.com/link_da_licenca).
-
-## 💭 FAQ - Perguntas frequentes
-
-#### Questão 1
-
-Resposta 1
-
-#### Questão 2
-
-Resposta 2
+Esse projeto está sob a licença (MIT) - acesse os detalhes [LICENSE.md](https://github.com/botlorien/Bot_ml_images_classify/blob/main/LICENSE).
 
 
-## 💡 Expressões de gratidão
-
-* Um agradecimento publicamente.
-* Para suporte, mande um email para nome@teste.com.
-* Link para o seu linkedin [Meu linkedin](https://url_do_link)
+## 📞​ Contato e Suporte
+* Para suporte, mande um email para botlorien@gmail.com.
+* [linkedin](linkedin.com/in/ben-hur-p-b-santos)
