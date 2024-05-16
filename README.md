@@ -11,7 +11,7 @@ Os modelos treinados são salvos para análises futuras. Relatórios detalhados 
 
 ## 🔥 Introdução
 
-A papeline de execução na Interface segue essa sequência abaixo: 
+A pipeline de execução na Interface segue essa sequência abaixo: 
 
 **Treino:**
 * BAIXAR IMAGENS
